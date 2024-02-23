@@ -3,17 +3,22 @@ import matplotlib.pyplot as plt
 #from scipy.fft import fft, ifft
 from numpy.fft import fft,ifftshift,fftshift,fftfreq
 
-amplitude = 10
+amplitude = 1
 sampling = 0.01                       #Sampling rate or step size
-f0=1
-f=f0
+T =10                                 # period of function
+FWHM = T*np.arccos(amplitude/2)/np.pi # define a FWHM to determine frequency of pulse                                      # 
+f0=np.arccos(amplitude/2)/(FWHM*np.pi)
+f=f0*10
 t=np.arange(-10,10+sampling,sampling)   #Time array defined in steps of "sampling"
 print(t)        
-ft = np.cos(2*np.pi*f*t)**2
-y=ft*amplitude*(np.sin(2*np.pi*f*t))**2              #Define function to Fourier Transform
+ft = np.cos(2*np.pi*f0*t)
+y=(ft*((np.sin(2*np.pi*f*t))**2))      #Define function to Fourier Transform
 print(y)
 
+Fwhm = np.arccos(amplitude/2)/(np.pi*f0)
+print(Fwhm)
 plt.figure(1)
+#plt.xlim(-2,2)
 plt.plot(t,y)                         #Plot (r,t) of Function y
 
 #Fourier Transform
@@ -25,5 +30,5 @@ freq = fftshift(fftfreq(t.shape[-1],d = sampling ))         #Returns frequency b
 spectrum = np.abs(yft)**2
 
 plt.figure(2)
-plt.xlim(-5,5)
+plt.xlim(-4,4)
 plt.plot(freq,spectrum)
