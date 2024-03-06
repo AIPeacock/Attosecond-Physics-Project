@@ -21,19 +21,23 @@ Field=(Carrier*((np.sin(np.pi*f0*t/N))**2))      #Define function to Fourier Tra
 #print(y)
 
 plt.figure(1)
-#plt.xlim(-2,2)
+plt.xlim(-0,10)
 plt.plot(t*f0,Field)                         #Plot (r,t) of Function y
-#plt.plot(fwhmx,halfmax)
-#plt.plot(-1.6666,0.5,'o')
-#plt.plot(1.6666,0.5,'o')
-#Fourier Transform
-#print(t.shape[-1])
+plt.title('Field against time')
+plt.show()
+
+plt.figure(2)
+plt.xlim(-0,10)
+plt.plot(t*f0,Field**2)                         #Plot (r,t) of Function y
+plt.title('Intensity against time')
+plt.show()
+
 yft = fftshift(fft(ifftshift(Field)))                           
 freq = fftshift(fftfreq(t.shape[-1],d = sampling ))         #Returns frequency bins using using window length(n) and 
                                                             #sample spacing (d).
 
 spectrum = np.abs(yft)**2
 
-plt.figure(2)
+plt.figure(3)
 plt.xlim(-1,1)
 plt.plot(freq,spectrum)
