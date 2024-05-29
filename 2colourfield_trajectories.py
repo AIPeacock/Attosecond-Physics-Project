@@ -38,9 +38,9 @@ def Traj_2(E0,w0,E1,w1,t,t0):
 #    plt.ylabel(r'x[t] ($a_{0}$)')
 #    plt.title(rf'Electron Trajectories (2 colour field, E0 = {E0} + E1 = {E0} )')
 
-#plt.figure(2)
-#w = 0 
-#for t1 in np.arange(0,0.6,0.1):
+# plt.figure(2)
+# w = 0 
+# for t1 in np.arange(0,0.6,0.1):
 #    xt1 = (E0/(w0**2))*(np.cos(w0*t)-np.cos(w0*t1))
 #    xt1 = xt1 + (E0/w0) * np.sin(w0*t1)*(t-t1)
 #    xt1 = e*xt1
@@ -50,8 +50,8 @@ def Traj_2(E0,w0,E1,w1,t,t0):
 #    plt.xlabel(r't (Cycles)')
 #    plt.ylabel(r'x[t] ($a_{0}$)')
 #    plt.title(r'Electron Trajectories (1 colour field, E0)')
-#print(Iontimes)
-#plt.legend(loc = 'best')
+# print(Iontimes)
+# plt.legend(loc = 'best')
 
 scaling = 3
 t0 = 0
