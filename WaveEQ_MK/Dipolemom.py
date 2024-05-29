@@ -36,9 +36,13 @@ d_matrix_ion = hydroDTME(Ps+A_t(t0,1),Ip)                                # Ionis
 
 d_matrix_recol = np.conj(hydroDTME(Ps+A_t(tf,1),Ip))                     # Recollision Dipole Matrix Element contaion (ps+A(t_recol))
 
-def AT(t):
-    return np.sin(w*t)
-t =4
-Field =np.gradient(AT(t),t)
+
+Field =-np.gradient(A_t(t_eval,0))/np.gradient(t_eval)
 print(Field)
 
+plt.figure(1)
+plt.plot(t_eval,A_t(t_eval,0))
+
+plt.figure(2)
+plt.plot(t_eval,Field)
+plt.show
