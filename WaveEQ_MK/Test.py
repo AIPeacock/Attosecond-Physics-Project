@@ -3,7 +3,7 @@ import numpy as np
 w = 0.057              #Define frequency of field
 t0 = 0                 #Define intial time (t_ref)
 tf = (2*np.pi/w)       #Define final time 
-dt = 0.1             #Time steps
+dt = 1             #Time steps
 
 t_list = []
 
@@ -18,4 +18,22 @@ for ti in np.arange(t0,tf,dt):    # Maybe this dt should be bigger and
         #np.array(t_list)
         #t_list = np.append(t_list,t_eva)
 
-print((t_list[5][4]))
+
+t_max = (tf - t0)/dt 
+
+
+
+
+
+
+a = 0
+for i in range(0,len(t_list)):
+    print(i)
+    for ti in np.arange(t0,tf,dt):
+        if  t_list[i][0] == ti:
+            a = a + 1 
+            print('ti',ti)
+            print('t_list',t_list[i][0])
+print('a',a)
+
+        
