@@ -16,7 +16,7 @@ plt.figure(1)
 plt.plot(t,y)                         #Plot (r,t) of Function y
 
 #Fourier Transform
-print(t.shape[-1])
+print('shape',t.shape[-1],'len',len(t))
 yft = fftshift(fft(ifftshift(y)))                           
 freq = fftshift(fftfreq(t.shape[-1],d = sampling ))         #Returns frequency bins using using window length(n) and 
                                                             #sample spacing (d).
