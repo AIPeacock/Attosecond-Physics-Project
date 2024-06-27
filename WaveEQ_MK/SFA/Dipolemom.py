@@ -13,8 +13,8 @@ def hydroDTME(p,k):              # K is ionisation potential(Sure ? ), p is mome
 
 w = 0.057              #Define frequency of field
 t0 = 0                 #Define intial time (t_ref)
-tf = (2*np.pi/w)       #Define final time 
-dt = 0.1                 #Time steps
+tf = 4*(2*np.pi/w)       #Define final time 
+dt = 0.2                 #Time steps
 I0 = (1*(10**14))/(3.51*(10**16))
 E0 = I0**(1/2)
 Ip=15.7/27.2
@@ -84,7 +84,7 @@ freq_axis = fftshift(fftfreq(t_full.shape[-1],d = dt))
 D_spectrum = np.abs(Dipole_freq)**2
 
 plt.figure(2)
-plt.plot(freq_axis/w,D_spectrum)
+plt.semilogy(freq_axis/w,D_spectrum)
 plt.xlabel('Frequency')
 #plt.xlim(-1,20)
 plt.ylabel('Intensity')
