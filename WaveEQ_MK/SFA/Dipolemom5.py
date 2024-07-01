@@ -18,9 +18,12 @@ def hydroDTME(p, k):
     DTME = (1j * 8 * np.sqrt(2 * (k**5)) * p) / (np.pi * (((p**2) + (k**2))**3))
     return DTME
 
+def time_to_index(time_value, dt):
+    return int(time_value * (1/dt))
+
 # Define constants
 w = 0.057  # Frequency of field
-dt = 0.5  # Time steps
+dt = 0.1  # Time steps
 t0 = 0  # Initial time
 Nc = 4
 tf =Nc*(2 * np.pi / w)  # Final time
@@ -42,6 +45,7 @@ Dipole = []
 Up = (E0**2) / (4 * (w**2))  # Ponderomotive force/potential
 gamma = np.sqrt(Ip / (2 * Up))  # Keldysh parameter
 kappa = np.sqrt(2 * Ip)  # Kappa
+epsilon = 1/((10*kappa)**2)
 
 # Record start time for performance measurement
 time_a = time.time()
@@ -54,45 +58,76 @@ ti_list = tr_grid[valid_indices]  # List of valid recombination times
 
 # Record time after generating time combinations
 time_b = time.time()
-print('Time nested for loop')
+print('Time to generate time values')
 print(time_b - time_a)
+
+At=np.zeros(N+1)
+time_e = time.time()
+for i in np.linspace(t0,tf,N):                               # Pre-calculating the vector potential for all possible times.
+     Atint = (dt/2)*(Field(i,E0,w)+Field(i-1,E0,w))  
+     index = time_to_index(i,dt)
+     At[index] = -1*Atint
+At2 = np.square(At)
+
+time_f = time.time()
+print('Time to calculate At2')
+print(time_f-time_e)
+
+time_1 = time.time()
+sol1 = np.zeros(N+1)
+solsquared2 = np.zeros(N+1)
+
+for i in np.linspace(t0,tf,N):
+     index = time_to_index(i,dt)
+     solint = (dt/2)*(At[index]+At[index-1])
+     sol1[index]=solint
+     sol2int = (dt/2)*(At2[index]+At2[index-1])
+     solsquared2[index]=sol2int
+
+time_2 = time.time()
+print('Time to calculate sol and solsquared')
+print(time_2 - time_1)
 
 # Record start time for integration
 time_c = time.time()
-
 # Loop over all valid combinations of ionization and recombination times
+ 
 for ti, tr in zip(ti_list, tr_list):
     if tr <= ti:
             continue
+    x = time_to_index(ti,dt)
+    y = time_to_index(tr,dt)
     #print('Tr',tr,'Ti',ti)
-    n =int((tr-ti)/dt)                         # Generates an array of times with each element including the increments between ti,tr
+    #n = int((tr-ti)/dt)                         # Generates an array of times with each element including the increments between ti,tr
     #print(n)
-    t_eva = np.linspace(ti, tr, n)
+    #t_eva = np.linspace(ti, tr, n)
     #print(t_eva)
-    # Calculate the vector potential A(t)
-    At = integrate.cumulative_trapezoid(pulse_field(t_eva, E0, w, Nc), dx=dt, initial=0)
-    A_t = -1 * At  # Invert the sign for the calculation
-    A_t2 = A_t**2  # Square of A(t)
-    
+    #A_t = At[x:y]          # x:y is the indexs of time that ti and tr correspond too.  
+     
+    #print('A_t',len(A_t),'A_t2',len(A_t2),'T_eva',len(t_eva))
     # Integrate A(t) and A(t)^2 over time to get sol and solsquared
-    sol = integrate.trapezoid(A_t, t_eva)
-    solsquared = integrate.trapezoid(A_t2, t_eva)
+    #sol = integrate.trapezoid(A_t, t_eva)
+    solsum = np.sum(sol1[x:y])
+    #print(sol - solsum)
+    #solsquared = integrate.trapezoid(A_t2, t_eva)
+    solsquaredsum = np.sum(solsquared2[x:y])
     
     # Calculate stationary momentum Ps
-    Ps = -sol / (tr - ti)
+    Ps = -solsum / (tr - ti)
     
     # Calculate the classical action Sv
-    Sv = Ip * (tr - ti) + 0.5 * (Ps**2) * (tr - ti) + Ps * sol + 0.5 * solsquared
+    Sv = Ip * (tr - ti) + 0.5 * (Ps**2) * (tr - ti) + Ps * solsum + 0.5 * solsquaredsum
 
     # Calculate ionization and recollision dipole matrix elements
-    d_matrix_ion = hydroDTME(Ps + A_t[0], kappa)
-    d_matrix_recol = np.conj(hydroDTME(Ps + A_t[-1], kappa))
+    d_matrix_ion = hydroDTME(Ps + At[x], kappa)
+    d_matrix_recol = np.conj(hydroDTME(Ps + At[y], kappa))
     
     # Define prefactors for the calculation
-    prefactor = 1#((2*np.pi)/(1j*(tr-ti)))**(3/2)  # Prefactor from momentum integration using saddle point
+    prefactor = ((2*np.pi)/(epsilon+1j*(tr-ti)))**(3/2)  # Prefactor from momentum integration using saddle point
 
     # Calculate and store the dipole moment
     Dipole.append((1j * prefactor * pulse_field(ti, E0, w,Nc) * d_matrix_ion*np.exp(-1j * Sv) )* d_matrix_recol )
+    ti_check = ti
 
 # Record end time for integration
 time_d = time.time()

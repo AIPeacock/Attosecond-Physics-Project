@@ -14,7 +14,7 @@ def hydroDTME(p,k):              # K is ionisation potential(Sure ? ), p is mome
 w = 0.057              #Define frequency of field
 t0 = 0                 #Define intial time (t_ref)
 tf = 4*(2*np.pi/w)       #Define final time 
-dt = 0.2                 #Time steps
+dt = 1                 #Time steps
 I0 = (1*(10**14))/(3.51*(10**16))
 E0 = I0**(1/2)
 Ip=15.7/27.2
@@ -71,6 +71,7 @@ i2=0
 i_sum = 0
 Dipole_total = []
 for i in range(int(tmax),-1,-1):                                                    #Summation of all dipole moms at individual ti times to generate array of Dipole Mom
+    print(i)
     i2 = i2 + i 
     Dipole_total = np.append(Dipole_total,sum(Dipole[i1:i2]))
     # print('Splice i1',i1,'i2',i2,'Dipole',Dipole[i1:i2])

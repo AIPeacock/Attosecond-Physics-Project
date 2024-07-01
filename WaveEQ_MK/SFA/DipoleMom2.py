@@ -68,7 +68,7 @@ for i in range(0,len(t_list)):                           # Main dipole calc
     
     prefactor1 =-1# -((2*np.pi*w*gamma)/((kappa*kappa)*(1+gamma*gamma)**(1/2)))       #Prefactor from derivative of action wrt ti
 
-    prefactor2 = 1#((2*np.pi)/(1j*(t_list[i][-1]-t_list[i][0])))**(3/2)              #Prefactor from Momentum integration using saddle point
+    prefactor2 = ((2*np.pi)/(1j*(t_list[i][-1]-t_list[i][0])))**(3/2)              #Prefactor from Momentum integration using saddle point
 
     Dipole = np.append(Dipole,1j*prefactor1*prefactor2*d_matrix_recol*d_matrix_ion*Field(t_list[i][0],E0)*np.exp(-1j*Sv))   #Calculation of dipole mom for all times(incl increments)
 
