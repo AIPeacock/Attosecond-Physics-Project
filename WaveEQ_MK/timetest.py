@@ -7,7 +7,7 @@ import time
 
 # Define constants
 w = 0.057  # Frequency of field
-dt = 0.1  # Time steps
+dt = 1  # Time steps
 t0 = 0  # Initial time
 tf = (2 * np.pi / w)  # Final time
 N = int(tf / dt)  # Number of time steps
@@ -42,16 +42,21 @@ time_b = time.time()
 print('Time nested for loop')
 print(time_b - time_a)
 
+plt.figure(1)
 plt.plot(ti_list,tr_list,marker ='o',color='k',linestyle='none')
 plt.xlabel('ti_list')
 plt.ylabel('tr_list')
-plt.show()
 
+
+x=[]
+y=[]
 for ti, tr in zip(ti_list, tr_list):
-    if tr <= ti:
-            continue
-    n =int((tr-ti)/dt)                         # Generates an array of times with each element including the increments between ti,tr
-    print(n)
-    t_eva = np.linspace(ti, tr, n)
+        if (tr-ti) <= 2*dt:
+                print(ti, tr)
+                continue
+        x = np.append(x,ti)
+        y = np.append(y,tr)
 
-    print('ti',ti,'tr',tr)
+plt.figure(2)
+plt.plot(x,y,marker = 'o',color = 'k',linestyle ='none')
+plt.show()
