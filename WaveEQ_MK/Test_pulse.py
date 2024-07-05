@@ -33,8 +33,9 @@ E0 = np.sqrt(I0)  # Electric field amplitude
 w = 0.057  # Frequency of field
 dt = 0.1  # Time steps
 t0 = 0  # Initial time
-tf =4*(2 * np.pi / w)  # Final time
-Nc = 4
+Nc = 10
+tf =Nc*(2 * np.pi / w)  # Final time
+
 N = int((tf-t0) / dt)  # Number of time steps/samples
 
 
