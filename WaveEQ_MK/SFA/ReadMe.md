@@ -15,7 +15,7 @@ Lastly a function is defined which converts individual time steps into integer n
 Next a series of constants which are related to the length and strength of pulse are defined in atomic units, $\hslash = m = e = 1$.
 
 **Define constants**\
-w =  _Frequency of field_ \ 
+w =  _Frequency of field_ \
 dt =  _Time steps_\
 t0 =  _Initial time_\
 Nc =  _Number of carrier cycles_\
@@ -42,9 +42,9 @@ cutoff = w_c/w    _Harmonic order_
 
 An array of all possible time values for the ionisation and recombination of an electron is generated using the `np.meshgrid` function where each of the axes are defined using `np.linspace(t0, tf, N)` which generates a list of evenly spaced times from t0 to tf. N is used to select the number of elements to generate such that the spacing between adjacent values is dt steps. 
 
-As a square mesh is generated, unphysical times are included such that an ionisation time (ti) may be greater than a recombination time (tr) so to remove these the `np.triu_indices_from(ti_grid, k=-1)` is used which selects the indices of the values that are above the diagonal that is to the upper left of the central diagonal going from the bottom left to the top right. 
+As a square mesh is generated, unphysical times are included such that an ionisation time (ti) may be greater(later) than a recombination time (tr) so to remove these the `np.triu_indices_from(ti_grid, k=-1)` is used which selects the indices of the values that are above the diagonal that is to the upper left of the central diagonal going from the bottom left to the top right. 
 
-_In fact this isn't quite true but is corrected for by reassiging the lists to each other_
+_In fact this isn't quite true but is corrected for by reassigning the lists to each other_ /
 `tr_list = ti_grid[valid_indices]`  
 `ti_list = tr_grid[valid_indices]`
 
@@ -53,5 +53,5 @@ _In fact this isn't quite true but is corrected for by reassiging the lists to e
 In the SFA theory used in the Lewenstein model the intgeral for the time dependent dipole moment is given by;
 
 $$
-\textbf{D}(t) = i \[\int_{t}^{t0}\,dt'\] \[\int,d\textbf{P}]
+\textbf{D}(t) = i \int_{t}^{t0} \ dt'\int\ d\textbf{p} \textbf{d}*(\textbf{p}+\textbf{A}(t)) \exp{-iS(\textbf(p),t,t')} \textbf{F}(t') \textbf{d}(\textbf{p}+\textbf{A}(t'))+ c.c.
 $$
