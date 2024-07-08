@@ -53,5 +53,5 @@ _In fact this isn't quite true but is corrected for by reassigning the lists to 
 In the SFA theory used in the Lewenstein model the intgeral for the time dependent dipole moment is given by;
 
 $$
-\textbf{D}(t) = i \int_{t}^{t0} \ dt'\int\ d\textbf{p} \textbf{d}*(\textbf{p}+\textbf{A}(t)) \exp{-iS(\textbf(p),t,t')} \textbf{F}(t') \textbf{d}(\textbf{p}+\textbf{A}(t'))+ c.c.
+\textbf{D}(t) = i \int_{t}^{t0} \ dt'\int\ d\textbf{p} \textbf{d}^*(\textbf{p}+\textbf{A}(t)) e^{-iS(\textbf{p},t,t')}.\textbf{F}(t').\textbf{d}(\textbf{p}+\textbf{A}(t'))+ c.c.
 $$
