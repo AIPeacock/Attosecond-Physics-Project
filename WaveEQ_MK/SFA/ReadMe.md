@@ -62,13 +62,13 @@ $\textbf{F}(t')$ is the Field vector which is defined using either of the previo
 
 and lastly $-iS(\textbf{p},t,t')$ is the energy part of the classical action and is given by,
 
-$$ S(\textbf{p},t,t')$ = \frac{1}{2} \int_{t'}^{t} [\textbf{p}+\textbf{A}(t'')]^2 \ dt'' + Ip(t-t')
+$$ S(\textbf{p},t,t')$ = \frac{1}{2} \int_{t'}^{t} [\textbf{p}+\textbf{A}(t'')]^2 \ dt'' + Ip(t-t') $$
 
 To compute this integral a Complex Saddle point method is used, which says that the majority of the contributions come from the action and these occur at its stationary points.
 
 This leads to an expression for the stationary momentum,
 
-$\textbf{p}_s(t,t')=-\frac{1}{t-t'} \int_{t'}^{t} \textbf{A} \ dt'' 
+$$ \textbf{p}_s(t,t')=-\frac{1}{t-t'} \int_{t'}^{t} \textbf{A} \ dt'' $$
 
 This can then be used to calculate the action, by considering the fact that the stationary moment is constant with respect to $ dt'' $ which allows us to expand the action to,
 
