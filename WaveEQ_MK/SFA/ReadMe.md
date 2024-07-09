@@ -70,9 +70,7 @@ To compute this integral a Complex Saddle point method is used, which says that 
 
 This leads to an expression for the stationary momentum,
 
-$$ 
-\textbf{p}_{s}(t,t')=-\frac{1}{t-t'} \int_{t'}^{t} \textbf{A} \ (dt'') 
-$$
+$\textbf{p}_{s}(t,t')=-\frac{1}{t-t'} \int_{t'}^{t} \textbf{A}(t'') dt''$ 
 
 This can then be used to calculate the action, by considering the fact that the stationary moment is constant with respect to $(dt'')$ which allows us to expand the action to,
 
