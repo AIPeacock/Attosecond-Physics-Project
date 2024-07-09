@@ -56,14 +56,14 @@ $$
 \textbf{D}(t) = i \int_{t}^{t0} \ dt'\int\ d\textbf{p} .\textbf{d}^*(\textbf{p}+\textbf{A}(t)).e^{-iS(\textbf{p},t,t')}.\textbf{F}(t').\textbf{d}(\textbf{p}+\textbf{A}(t'))+ c.c.
 $$
 
-Where $\textbf{d}^*(\textbf{p}+\textbf{A}(t))$ and $\textbf{d}(\textbf{p}+\textbf{A}(t'))$ are the previously Dipole Transistion Matrix Elements which will be calculated using, `def hydroDTME(p, k):`,
+Where $\textbf{d}^*(\textbf{p}+\textbf{A}(t))$ and $\textbf{d}(\textbf{p}+\textbf{A}(t'))$ are the previously mentioned Dipole Transistion Matrix Elements which will be calculated using, `def hydroDTME(p, k):`,
 
 $\textbf{F}(t')$ is the Field vector which is defined using either of the previously defined Field functions. 
 
 and lastly $-iS(\textbf{p},t,t')$ is the energy part of the classical action and is given by,
 
 $$ 
-\S(\textbf{p},t,t') = \frac{1}{2} \int_{t'}^{t} [\textbf{p}+\textbf{A}(t'')]^2 \ dt'' + Ip(t-t') 
+S(\textbf{p},t,t') = \frac{1}{2} \int_{t'}^{t} [\textbf{p}+\textbf{A}(t'')]^2 \ dt'' + I_p(t-t') 
 $$
 
 To compute this integral a Complex Saddle point method is used, which says that the majority of the contributions come from the action and these occur at its stationary points.
@@ -74,8 +74,8 @@ $$
 \textbf{p}_s(t,t')=-\frac{1}{t-t'} \int_{t'}^{t} \textbf{A} \ dt'' 
 $$
 
-This can then be used to calculate the action, by considering the fact that the stationary moment is constant with respect to $\dt''$ which allows us to expand the action to,
+This can then be used to calculate the action, by considering the fact that the stationary moment is constant with respect to $ \dt'' $ which allows us to expand the action to,
 
 $$ 
-\S_{v}(t,t') = Ip(t-t') + \frac{1}{2}.\textbf{p}_s^2(t-t') + \textbf{p}_s.\int_{t'}^{t} \textbf{A}t'' \dt'' + \frac{1}{2}\int_{t'}^{t} \textbf{A}(t'')^2 \dt'' 
+\S_{v}(t,t') = Ip(t-t') + \frac{1}{2} \textbf{p}_s^2(t-t') + \textbf{p}_s \int_{t'}^{t} \textbf{A}t'' \dt'' + \frac{1}{2}\int_{t'}^{t} \textbf{A}(t'')^2 \dt'' 
 $$
