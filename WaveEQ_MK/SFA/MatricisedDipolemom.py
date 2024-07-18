@@ -6,30 +6,40 @@ from scipy import integrate
 # def Field(t, F, w, Nc):
 #     return  np.cos(w * t ) * F #+  F*np.sin(3*w*t) + F*np.sin(5*w*t)
 
-def Field(t, F, w, Nc, transition_duration):
-    # Length of the initial cosine signal
-    tf_cos = Nc * (2 * np.pi / w)
+def Field_window(t, F, w, Nc, duration):
+    # Length of the sine signal
+    tf_sin = Nc * (2 * np.pi / w)
     
-    # Initialize the field with the initial cosine signal
-    field = np.sin(w * t) * F
+    # Initialize the field with zeros
+    field = np.zeros_like(t)
     
-    # Create a window function to smoothly transition to zero after tf_cos
-    transition_start = tf_cos
-    transition_end = tf_cos + transition_duration
+    # Ramp-up window (cosine-squared envelope)
+    ramp_up_end = duration
+    ramp_up_region = (t >= 0) & (t <= ramp_up_end)
+    ramp_up_window = np.sin((t[ramp_up_region] / duration) * np.pi / 2) ** 2
+    
+    # Set the field in the ramp-up region
+    field[ramp_up_region] = np.sin(w * t[ramp_up_region]) * F * ramp_up_window
+    
+    # Main sine wave region
+    main_region = (t > ramp_up_end) & (t <= ramp_up_end + tf_sin)
+    field[main_region] = np.sin(w * (t[main_region] - duration)) * F
     
     # Transition window (cosine-squared envelope)
-    transition_region = (t >= transition_start) & (t <= transition_end)
-    transition_window = np.cos((t[transition_region] - transition_start) / transition_duration * np.pi / 2) ** 2
+    transition_start = ramp_up_end + tf_sin
+    transition_end = transition_start + duration
+    transition_region = (t > transition_start) & (t <= transition_end)
+    transition_window = np.cos((t[transition_region] - transition_start) / duration * np.pi / 2) ** 2
     
     # Apply the transition window to the field
-    field[transition_region] *= transition_window
-    
-    # Zero the field after the transition period
-    field[t > transition_end] = 0
+    field[transition_region] = np.sin(w * (t[transition_region] - duration)) * F * transition_window
     
     return field
 
-def pulse_Field(t, F, w, Nc):
+def Field(t,F,w,Nc,duration):
+    return np.cos(w*t)*F
+
+def pulse_Field(t, F, w, Nc, duration):
     return (np.sin(w * (t - (Nc * 2 * np.pi / w) / 2)) * ((np.sin(np.pi * t / (Nc * 2 * np.pi / w))) ** 2)) * F
 
 def hydroDTME(p, k):
@@ -39,10 +49,10 @@ def hydroDTME(p, k):
 # Define constants
 w = 0.057
 dt = 0.1
-Nc = 5
-transition_duration = 2 * np.pi / w  # Duration of the transition window
+Nc = 4
+duration = 6 * np.pi / w  # Duration of the envelope window
 t0 = 0
-tf = (Nc * (2 * np.pi / w)) + transition_duration  # Extra time for the transition
+tf = duration + (Nc * (2 * np.pi / w)) + duration  # Total time including ramp-up and transition
 N = int((tf - t0) / dt)
 c = 299792458 / 2.187e6  # Atomic Units ??
 
@@ -81,9 +91,9 @@ plt.xlabel('tr')
 plt.ylabel('ti')
 
 #Find vector potential of given field
-Field_list = Field(t_full,E0,w,Nc,transition_duration)
+Field_list = Field_window(t_full,E0,w,Nc, duration)
 At = -1*integrate.cumulative_trapezoid(Field_list,x=t_full,dx=dt,initial=0)
-At = At + max(abs(At))/2   #Only needed to correct for sin field
+#At = At + max(abs(At))/2   #Only needed to correct for sin field
 #Square of vector potential 
 At2 = np.square(At)
 
@@ -201,7 +211,7 @@ prefactor_matrix2 = ((np.pi) / (epsilon + (1j * delta_t_matrix / 2)))**(3 / 2)
 
 Dipolemom_matrix = 1j * (prefactor_matrix2 * d_recomb_matrix * (d_ion_matrix * Field_matrix_ion) * np.exp(-1j * Sv_matrix))
  
-Dipole_total2 = np.sum(Dipolemom_matrix, axis =1)
+Dipole_total2 = np.sum(Dipolemom_matrix, axis =1)*dt
 
 
 plt.figure(6)
@@ -215,7 +225,7 @@ plt.plot(field_freq_axis/w,abs(Freq_Field)**2/max(abs(Freq_Field)**2))
 plt.xlabel('Frequency (Harmonic order)')
 plt.xlim(-2,2)
 
-# Plot the real part of the dipole moment over time
+# Plot the real part of the dipole moment over time      #Dipole_total2[: int((((Nc-1) * (2 * np.pi / w)) - t0) / dt)],to be used when plotting CW signals to remove weird end of dipole mom
 plt.figure(8)
 plt.plot(t_full/(2 * np.pi / w), np.real(Dipole_total2))
 plt.xlabel('Time (Cycles of carrier) ')
@@ -225,7 +235,7 @@ plt.ylabel('Dipole Moment')
 #Harmonic_scale = (w**4)/(2*np.pi*(c**3))
 Dipole_freq = fftshift(fft(ifftshift(Dipole_total2)))
 freq_axis = (2*np.pi)*fftshift(fftfreq(t_full.shape[-1], d=dt))
-scaled_harmonic_intensity = ((freq_axis)**3)/(2*np.pi*(c**3))
+scaled_harmonic_intensity = ((freq_axis)**2)#/(2*np.pi*(c**3))
 D_spectrum = (np.abs(Dipole_freq)**2)*scaled_harmonic_intensity              #Need to Scale to harmonic intensity ??
 
 # Plot the spectrum
