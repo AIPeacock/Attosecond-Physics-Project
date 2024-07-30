@@ -18,26 +18,28 @@ def Field_window(t, F, w, Nc, duration):
     ramp_up_region = (t >= 0) & (t <= ramp_up_end)
     ramp_up_window = np.sin((t[ramp_up_region] / duration) * np.pi / 2) ** 2
     
+
     # Set the field in the ramp-up region
-    field[ramp_up_region] = np.sin(w * t[ramp_up_region]) * F * ramp_up_window
+    field[ramp_up_region] = np.cos(w * t[ramp_up_region]) * F * ramp_up_window
     
     # Main sine wave region
-    main_region = (t > ramp_up_end) & (t <= ramp_up_end + tf_sin)
-    field[main_region] = np.sin(w * (t[main_region] - duration)) * F
+    main_region = (t > duration) & (t <= (duration + tf_sin))
+    field[main_region] = np.cos(w * (t[main_region] - duration)) * F
     
     # Transition window (cosine-squared envelope)
-    transition_start = ramp_up_end + tf_sin
+    transition_start = duration + tf_sin
     transition_end = transition_start + duration
     transition_region = (t > transition_start) & (t <= transition_end)
     transition_window = np.cos((t[transition_region] - transition_start) / duration * np.pi / 2) ** 2
     
     # Apply the transition window to the field
-    field[transition_region] = np.sin(w * (t[transition_region] - duration)) * F * transition_window
+    field[transition_region] = np.cos(w * (t[transition_region] - duration)) * F * transition_window
     
     return field
 
-def Field(t,F,w,Nc,duration):
-    return np.cos(w*t)*F
+
+def Field(t, Fx, w,Nc,duration):
+    return np.cos(w * t) * Fx 
 
 def pulse_Field(t, F, w, Nc, duration):
     return (np.sin(w * (t - (Nc * 2 * np.pi / w) / 2)) * ((np.sin(np.pi * t / (Nc * 2 * np.pi / w))) ** 2)) * F
@@ -49,8 +51,8 @@ def hydroDTME(p, k):
 # Define constants
 w = 0.057
 dt = 0.1
-Nc = 4
-duration = 6 * np.pi / w  # Duration of the envelope window
+Nc = 6
+duration = 3*(2 * np.pi / w)  # Duration of the envelope window
 t0 = 0
 tf = duration + (Nc * (2 * np.pi / w)) + duration  # Total time including ramp-up and transition
 N = int((tf - t0) / dt)
@@ -68,7 +70,7 @@ t_full = np.linspace(t0, tf, N)
 Up = (E0 ** 2) / (4 * (w ** 2))
 gamma = np.sqrt(Ip / (2 * Up))
 kappa = np.sqrt(2 * Ip)
-epsilon = 1e-4
+epsilon = 1e-8
 
 # Calculate Cut-off frequency
 w_c = Ip + 3.17 * Up
@@ -79,11 +81,12 @@ print('Cutoff (Harmonic Order)', cutoff)
 tr_grid, ti_grid = np.meshgrid(np.linspace(t0, tf, N), np.linspace(t0, tf, N))     # Ti_grid goes across horizontally, Tr_grid goes up vertically So both are NxN arrays 
 valid_indices = np.triu_indices_from(ti_grid, k=0)                            # Ti_grid is all the horizontal values so first element is N zeros then the second is N 1's etc until the last 
                                                                               # Element which is N N's, The valid 
-tr_list = tr_grid[valid_indices]                                              # 
-ti_list = ti_grid[valid_indices]                                              # 
+#tr_list = tr_grid[valid_indices]                                              # 
+#ti_list = ti_grid[valid_indices]                                              # 
 mask = np.triu(np.ones_like(tr_grid), k=0)
 delta_t_matrix = (tr_grid - ti_grid) * mask
 
+plt.figure(100)
 plt.imshow(delta_t_matrix, extent=(t0, tf, t0, tf), origin='lower', aspect='auto')
 plt.colorbar()
 plt.title('delta_t_matrix')
@@ -175,7 +178,7 @@ plt.show()
 
 Ps_matrix = -1 * np.divide(Sol1_matrix, delta_t_matrix, out=np.zeros_like(Sol1_matrix), where=np.abs(delta_t_matrix) > epsilon)
 
-np.fill_diagonal(Ps_matrix, At)   # Maybe this is an issue ? 
+np.fill_diagonal(Ps_matrix, At)   
 
 plt.figure(7)
 plt.imshow(Ps_matrix, extent=(t0, tf, t0, tf), origin='lower')
@@ -253,6 +256,6 @@ plt.xlabel('Frequency (Harmonic Order)')
 plt.ylabel('Intensity')
 plt.xticks(np.arange(0,50,1))
 plt.xlim(0,50)
-plt.vlines(x=[1,3,5,7,9,11,cutoff/2,Ip/w],ymin=0,ymax=1e-4,colors =['red','red','red','red','red','red','green','orange'])
+plt.vlines(x=[1,3,5,7,9,11,cutoff/2,Ip/w],ymin=0,ymax=1e-1,colors =['red','red','red','red','red','red','green','orange'])
 plt.axvline(x=cutoff,ymin=0,ymax=0.9,color='blue')
 plt.show()
